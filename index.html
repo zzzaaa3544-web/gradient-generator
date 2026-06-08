@@ -1,0 +1,81 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Gradient Generator</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#0f0f23;color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+.ob{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:1000;display:flex;justify-content:center;align-items:center}.ob.hide{display:none}
+.oc{background:#1a1a3e;border-radius:20px;padding:40px;max-width:500px;width:90%;text-align:center}
+.oc h2{color:#a855f7;font-size:28px;margin-bottom:8px}.oc .sub{color:#888;font-size:14px}
+.stps{margin:25px 0;text-align:left;display:flex;flex-direction:column;gap:18px}
+.st{display:flex;gap:14px;align-items:flex-start}.st .n{width:32px;height:32px;border-radius:50%;background:#a855f7;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.st h4{font-size:14px;margin-bottom:2px}.st p{font-size:12px;color:#888;line-height:1.5}
+.oc button{padding:14px 40px;border:none;border-radius:10px;background:#a855f7;color:#fff;font-size:16px;font-weight:600;cursor:pointer}
+.oc .sk{color:#555;font-size:12px;cursor:pointer;margin-top:12px;display:inline-block}
+.app{display:none;max-width:700px;width:100%;padding:20px;text-align:center}.app.show{display:block}
+h1{margin-bottom:5px}h1 span{background:linear-gradient(90deg,#a855f7,#fd79a8,#feca57);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub2{color:#666;margin-bottom:20px;font-size:14px}
+.preview{width:100%;height:250px;border-radius:20px;margin-bottom:20px;border:3px solid #333;transition:background 0.3s}
+.controls{background:#1a1a3e;border-radius:14px;padding:20px;margin-bottom:20px}
+.color-row{display:flex;justify-content:center;gap:15px;margin-bottom:15px;flex-wrap:wrap}
+.color-pick{text-align:center}
+.color-pick input[type=color]{width:60px;height:60px;border:3px solid #333;border-radius:12px;cursor:pointer;padding:2px;background:none}
+.color-pick input[type=color]:hover{border-color:#a855f7}
+.color-pick .hex{font-family:monospace;font-size:12px;color:#888;margin-top:4px}
+.angle-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px}
+.angle-row label{font-size:13px;color:#888}
+.angle-row input[type=range]{width:200px;accent-color:#a855f7}
+.angle-row .val{font-family:monospace;font-size:14px;color:#a855f7;min-width:40px}
+.type-row{display:flex;justify-content:center;gap:8px;margin-bottom:15px}
+.type-row button{padding:8px 16px;border:1px solid #333;border-radius:8px;background:transparent;color:#888;cursor:pointer;font-size:13px}
+.type-row button.active{background:#a855f7;color:#fff;border-color:#a855f7}
+.output{background:#1a1a3e;border-radius:14px;padding:20px;margin-bottom:20px;text-align:left}
+.output code{display:block;font-family:monospace;font-size:13px;color:#a855f7;word-break:break-all;line-height:1.5}
+.output .copy-btn{margin-top:10px;padding:8px 16px;border:1px solid #a855f7;border-radius:8px;background:transparent;color:#a855f7;cursor:pointer;font-size:12px}
+.presets{margin-bottom:20px}
+.presets h3{color:#888;font-size:13px;margin-bottom:10px}
+.presets .row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.presets .preset{width:60px;height:40px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:.15s}
+.presets .preset:hover{border-color:#fff;transform:scale(1.1)}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#a855f7;color:#fff;padding:12px 24px;border-radius:10px;font-weight:600;opacity:0;transition:.3s}
+.toast.show{opacity:1}
+</style></head><body>
+<div class="ob" id="ob"><div class="oc">
+<h2>Gradient Generator</h2><p class="sub">Create beautiful CSS gradients visually</p>
+<div class="stps">
+<div class="st"><div class="n">1</div><div><h4>Pick Colors</h4><p>Click the color pickers to choose two (or more) colors for your gradient.</p></div></div>
+<div class="st"><div class="n">2</div><div><h4>Adjust Settings</h4><p>Change the angle with the slider. Switch between Linear and Radial gradient types.</p></div></div>
+<div class="st"><div class="n">3</div><div><h4>Copy the CSS</h4><p>The CSS code appears below. Click Copy to clipboard and paste it in your project!</p></div></div>
+</div>
+<button onclick="start()">Start Creating</button>
+<div class="sk" onclick="start()">Skip</div>
+</div></div>
+<div class="app" id="app">
+<h1><span>Gradient Generator</span></h1><p class="sub2">Design gradients, copy the CSS</p>
+<div class="preview" id="preview"></div>
+<div class="controls">
+<div class="color-row"><div class="color-pick"><input type="color" id="c1" value="#a855f7" oninput="update()"><div class="hex" id="h1">#a855f7</div></div><div class="color-pick"><input type="color" id="c2" value="#fd79a8" oninput="update()"><div class="hex" id="h2">#fd79a8</div></div><div class="color-pick"><input type="color" id="c3" value="#feca57" oninput="update()"><div class="hex" id="h3">#feca57</div></div></div>
+<div class="angle-row"><label>Angle:</label><input type="range" id="angle" min="0" max="360" value="135" oninput="update()"><span class="val" id="angleVal">135&deg;</span></div>
+<div class="type-row"><button class="active" onclick="setType('linear',this)">Linear</button><button onclick="setType('radial',this)">Radial</button></div>
+</div>
+<div class="output"><code id="cssCode"></code><button class="copy-btn" onclick="copyCSS()">Copy CSS</button></div>
+<div class="presets"><h3>PRESETS</h3><div class="row" id="presetRow"></div></div></div>
+<div class="toast" id="toast">Copied!</div>
+<script>
+var gType='linear';
+var presets=[['#667eea','#764ba2'],['#f093fb','#f5576c'],['#4facfe','#00f2fe'],['#43e97b','#38f9d7'],['#fa709a','#fee140'],['#a18cd1','#fbc2eb'],['#ffecd2','#fcb69f'],['#ff9a9e','#fecfef'],['#a1c4fd','#c2e9fb'],['#d4fc79','#96e6a1'],['#84fab0','#8fd3f4'],['#cfd9df','#e2ebf0']];
+function start(){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show');localStorage.setItem('gg_seen','1');init()}
+if(localStorage.getItem('gg_seen')){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show')}
+function init(){
+document.getElementById('presetRow').innerHTML=presets.map(function(p,i){return '<div class="preset" style="background:linear-gradient(135deg,'+p[0]+','+p[1]+')" onclick="applyPreset('+i+')"></div>'}).join('');update()}
+function update(){
+var c1=document.getElementById('c1').value;var c2=document.getElementById('c2').value;var c3=document.getElementById('c3').value;
+var angle=document.getElementById('angle').value;
+document.getElementById('h1').textContent=c1;document.getElementById('h2').textContent=c2;document.getElementById('h3').textContent=c3;
+document.getElementById('angleVal').textContent=angle+'\u00b0';
+var css='';if(gType==='linear')css='linear-gradient('+angle+'deg, '+c1+', '+c2+', '+c3+')';
+else css='radial-gradient(circle, '+c1+', '+c2+', '+c3+')';
+document.getElementById('preview').style.background=css;
+document.getElementById('cssCode').textContent='background: '+css+';';
+}
+function setType(t,btn){gType=t;document.querySelectorAll('.type-row button').forEach(function(b){b.classList.remove('active')});btn.classList.add('active');update()}
+function applyPreset(i){document.getElementById('c1').value=presets[i][0];document.getElementById('c2').value=presets[i][1];update()}
+function copyCSS(){navigator.clipboard.writeText(document.getElementById('cssCode').textContent);var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1500)}
+init();
+</script></body></html>
